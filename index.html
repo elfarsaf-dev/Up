@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Auto Compress & Upload</title>
+  <title>Elfar Uploader Premium</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -11,10 +11,15 @@
       background: #0f172a;
       color: #e5e7eb;
       padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
     }
     .container {
       max-width: 640px;
-      margin: auto;
+      width: 100%;
       background: #020617;
       padding: 20px;
       border-radius: 12px;
@@ -24,15 +29,22 @@
       text-align: center;
       margin-top: 0;
     }
-    input[type=file] {
+    input[type=file], input[type=password] {
       width: 100%;
       padding: 14px;
       border-radius: 10px;
       border: 1px dashed #334155;
       background: #1e293b;
       color: #e5e7eb;
-      cursor: pointer;
       box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+    input[type=file] {
+      cursor: pointer;
+    }
+    input[type=password] {
+      border-style: solid;
+      text-align: center;
     }
     #status {
       margin-top: 12px;
@@ -76,18 +88,40 @@
     .btn-clear:hover {
       background: #991b1b;
     }
+    .btn-login {
+      background: #0ea5e9;
+      color: #fff;
+    }
+    .btn-login:hover {
+      background: #0284c7;
+    }
     .note {
       text-align: center;
       font-size: 12px;
       color: #94a3b8;
       margin-top: 8px;
     }
+    #main-content {
+      display: none;
+    }
+    #login-screen {
+      display: block;
+    }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>📤 Auto Compress & Upload</h2>
+<!-- Login Screen -->
+<div id="login-screen" class="container">
+  <h2>🔐 Elfar Uploader Premium</h2>
+  <input type="password" id="password" placeholder="Masukkan Password">
+  <button class="btn-login" id="loginBtn">Buka Akses</button>
+  <div id="login-status" class="note"></div>
+</div>
+
+<!-- Main Content -->
+<div id="main-content" class="container">
+  <h2>📤 Elfar Uploader Premium</h2>
 
   <input
     type="file"
@@ -117,6 +151,39 @@
 <script src="https://unpkg.com/browser-image-compression"></script>
 
 <script>
+// Hash SHA-256 for "telkomsel"
+const VALID_HASH = "8190779774a38b375b774a9844df591d8481308a38ec9245a1631526487e497d";
+
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+const loginBtn = document.getElementById("loginBtn");
+const passwordInput = document.getElementById("password");
+const loginStatus = document.getElementById("login-status");
+const loginScreen = document.getElementById("login-screen");
+const mainContent = document.getElementById("main-content");
+
+loginBtn.addEventListener("click", async () => {
+  const pass = passwordInput.value;
+  const hashed = await sha256(pass);
+  
+  if (hashed === VALID_HASH) {
+    loginScreen.style.display = "none";
+    mainContent.style.display = "block";
+  } else {
+    loginStatus.textContent = "❌ Password salah!";
+    loginStatus.style.color = "#ef4444";
+  }
+});
+
+passwordInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") loginBtn.click();
+});
+
 const API_URL = "https://api.ferdev.my.id/remote/elfar";
 const API_KEY = "key-elfs";
 
@@ -136,7 +203,6 @@ input.addEventListener("change", async () => {
     let file = files[i];
 
     try {
-      // 🔹 Kompres otomatis kalau gambar
       if (file.type.startsWith("image/")) {
         file = await imageCompression(file, {
           maxSizeMB: 0.7,
@@ -154,7 +220,6 @@ input.addEventListener("change", async () => {
         }
       });
 
-      // ✅ Ambil dlink saja
       if (res.data && res.data.dlink) {
         resultEl.value += res.data.dlink + "\n";
       } else {
@@ -173,7 +238,6 @@ input.addEventListener("change", async () => {
   statusEl.textContent = "🎉 Semua file selesai diproses";
 });
 
-// 🧹 Tombol bersihkan
 clearBtn.addEventListener("click", () => {
   input.value = "";
   resultEl.value = "";
