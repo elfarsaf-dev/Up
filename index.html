@@ -153,6 +153,8 @@
 <script>
 // Base64 of "telkomsel" is "dGVsa29tc2Vs"
 const ENCODED_PASS = "dGVsa29tc2Vs";
+// Base64 of "key-elfs" is "a2V5LWVsZnM="
+const ENCODED_KEY = "a2V5LWVsZnM=";
 
 const loginBtn = document.getElementById("loginBtn");
 const passwordInput = document.getElementById("password");
@@ -178,7 +180,7 @@ passwordInput.addEventListener("keypress", (e) => {
 });
 
 const API_URL = "https://api.ferdev.my.id/remote/elfar";
-const API_KEY = "key-elfs";
+const getApiKey = () => atob(ENCODED_KEY);
 
 const input = document.getElementById("files");
 const statusEl = document.getElementById("status");
@@ -209,7 +211,7 @@ input.addEventListener("change", async () => {
 
       const res = await axios.post(API_URL, form, {
         headers: {
-          Authorization: `Bearer ${API_KEY}`
+          Authorization: `Bearer ${getApiKey()}`
         }
       });
 
