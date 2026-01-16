@@ -155,10 +155,7 @@
 const VALID_HASH = "8190779774a38b375b774a9844df591d8481308a38ec9245a1631526487e497d";
 
 async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message.trim());
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return "hash_disabled";
 }
 
 const loginBtn = document.getElementById("loginBtn");
@@ -167,11 +164,8 @@ const loginStatus = document.getElementById("login-status");
 const loginScreen = document.getElementById("login-screen");
 const mainContent = document.getElementById("main-content");
 
-loginBtn.addEventListener("click", async () => {
+loginBtn.addEventListener("click", () => {
   const pass = passwordInput.value.trim().toLowerCase();
-  const hashed = await sha256(pass);
-  console.log("Input:", pass);
-  console.log("Hashed:", hashed);
   
   if (pass === "telkomsel") {
     loginScreen.style.display = "none";
