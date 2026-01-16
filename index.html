@@ -151,12 +151,8 @@
 <script src="https://unpkg.com/browser-image-compression"></script>
 
 <script>
-// Hash SHA-256 for "telkomsel"
-const VALID_HASH = "8190779774a38b375b774a9844df591d8481308a38ec9245a1631526487e497d";
-
-async function sha256(message) {
-  return "hash_disabled";
-}
+// Base64 of "telkomsel" is "dGVsa29tc2Vs"
+const ENCODED_PASS = "dGVsa29tc2Vs";
 
 const loginBtn = document.getElementById("loginBtn");
 const passwordInput = document.getElementById("password");
@@ -166,8 +162,9 @@ const mainContent = document.getElementById("main-content");
 
 loginBtn.addEventListener("click", () => {
   const pass = passwordInput.value.trim().toLowerCase();
+  const encoded = btoa(pass);
   
-  if (pass === "telkomsel") {
+  if (encoded === ENCODED_PASS) {
     loginScreen.style.display = "none";
     mainContent.style.display = "block";
   } else {
