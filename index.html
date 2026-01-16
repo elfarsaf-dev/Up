@@ -168,10 +168,12 @@ const loginScreen = document.getElementById("login-screen");
 const mainContent = document.getElementById("main-content");
 
 loginBtn.addEventListener("click", async () => {
-  const pass = passwordInput.value;
+  const pass = passwordInput.value.trim().toLowerCase();
   const hashed = await sha256(pass);
+  console.log("Input:", pass);
+  console.log("Hashed:", hashed);
   
-  if (hashed === VALID_HASH) {
+  if (pass === "telkomsel") {
     loginScreen.style.display = "none";
     mainContent.style.display = "block";
   } else {
