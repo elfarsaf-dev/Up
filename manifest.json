@@ -1,0 +1,16 @@
+{
+  "name": "Elfar Uploader Premium",
+  "short_name": "Elfar Uploader",
+  "description": "Auto Compress & Upload for Elfar Uploader Premium",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/338/338864.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
