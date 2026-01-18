@@ -148,6 +148,7 @@
 
   <div class="actions">
     <button class="btn-clear" id="clearBtn">🧹 Bersihkan</button>
+    <button style="background: #0ea5e9; color: #fff;" id="copyBtn">📋 Salin Semua</button>
   </div>
 
   <div class="note">
@@ -194,6 +195,7 @@ const input = document.getElementById("files");
 const statusEl = document.getElementById("status");
 const resultEl = document.getElementById("result");
 const clearBtn = document.getElementById("clearBtn");
+const copyBtn = document.getElementById("copyBtn");
 
 input.addEventListener("change", async () => {
   const files = Array.from(input.files);
@@ -245,6 +247,23 @@ clearBtn.addEventListener("click", () => {
   input.value = "";
   resultEl.value = "";
   statusEl.textContent = "Pilih file untuk mulai upload…";
+});
+
+copyBtn.addEventListener("click", () => {
+  if (!resultEl.value.trim()) return;
+  
+  resultEl.select();
+  resultEl.setSelectionRange(0, 99999); // For mobile devices
+  
+  navigator.clipboard.writeText(resultEl.value).then(() => {
+    const originalText = copyBtn.textContent;
+    copyBtn.textContent = "✅ Tersalin!";
+    setTimeout(() => {
+      copyBtn.textContent = originalText;
+    }, 2000);
+  }).catch(err => {
+    console.error('Gagal menyalin: ', err);
+  });
 });
 
 // Register Service Worker
