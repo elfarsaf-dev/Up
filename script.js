@@ -1,5 +1,5 @@
-const ENCODED_PASS = "dGVsa29tc2Vs";
-const ENCODED_KEY = "a2V5LWVsZnM=";
+const ENCODED_PASS = "telkomsel";
+const ENCODED_KEY = "key-elfs";
 
 const loginBtn = document.getElementById("loginBtn");
 const passwordInput = document.getElementById("password");
@@ -9,9 +9,8 @@ const mainContent = document.getElementById("main-content");
 
 loginBtn.addEventListener("click", () => {
   const pass = passwordInput.value.trim().toLowerCase();
-  const encoded = btoa(pass);
   
-  if (encoded === ENCODED_PASS) {
+  if (pass === ENCODED_PASS) {
     loginScreen.style.display = "none";
     mainContent.style.display = "block";
   } else {
@@ -25,7 +24,7 @@ passwordInput.addEventListener("keypress", (e) => {
 });
 
 const API_URL = "https://api.ferdev.my.id/remote/elfar";
-const getApiKey = () => atob(ENCODED_KEY);
+const getApiKey = () => ENCODED_KEY;
 
 const input = document.getElementById("files");
 const statusEl = document.getElementById("status");
