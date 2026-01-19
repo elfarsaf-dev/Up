@@ -1,8 +1,8 @@
 export default {
   async fetch(request, env) {
     const ALLOWED_ORIGINS = [
-      "https://elfar.my.id",
-      "https://tools.elfar.my.id",
+      "https://uploader.elfar.my.id",
+      "www.uploader.elfar.my.id",
       // Tambahkan domain Replit Anda di sini jika ingin mengetes dari Replit
     ];
 
