@@ -23,6 +23,8 @@ passwordInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") loginBtn.click();
 });
 
+// Gunakan URL Worker jika dideploy ke Cloudflare Worker
+// Jika masih lokal/Replit, tetap pakai API_URL langsung
 const API_URL = "https://api.ferdev.my.id/remote/elfar";
 const getApiKey = () => ENCODED_KEY;
 
@@ -54,14 +56,19 @@ input.addEventListener("change", async () => {
       const form = new FormData();
       form.append("file", file, file.name);
 
-      const res = await axios.post(API_URL, form, {
+      // Jika menggunakan Worker, ganti fetch ini ke endpoint Worker Anda
+      const res = await fetch(API_URL, {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${getApiKey()}`
-        }
+        },
+        body: form
       });
 
-      if (res.data && res.data.dlink) {
-        resultEl.value += res.data.dlink + "\n";
+      const data = await res.json();
+
+      if (data && data.dlink) {
+        resultEl.value += data.dlink + "\n";
       } else {
         resultEl.value += "❌ Link tidak ditemukan\n";
       }

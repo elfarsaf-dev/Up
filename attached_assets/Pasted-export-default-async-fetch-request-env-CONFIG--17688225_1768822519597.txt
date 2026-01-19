@@ -1,0 +1,102 @@
+export default {
+  async fetch(request, env) {
+
+    // =============================
+    // CONFIG
+    // =============================
+    const ALLOWED_ORIGINS = [
+      "https://elfar.my.id",
+      "https://tools.elfar.my.id"
+    ];
+
+    const API_URL = "https://api.ferdev.my.id/remote/elfar";
+    const API_KEY = "key-elfs";
+
+    const url = new URL(request.url);
+
+    // =============================
+    // SERVE JS
+    // =============================
+    if (url.pathname === "/app.js") {
+
+      const origin = request.headers.get("referer") || "";
+      const allowed = ALLOWED_ORIGINS.some(d => origin.startsWith(d));
+
+      if (!allowed) {
+        return new Response("// Forbidden", { status: 403 });
+      }
+
+      const js = `
+        (() => {
+          const app = document.getElementById("app");
+          app.innerHTML = \`
+            <input type="password" id="pass" placeholder="Password"/>
+            <button id="login">Login</button>
+            <input type="file" id="files" multiple style="display:none"/>
+            <textarea id="result"></textarea>
+          \`;
+
+          const PASS = "telkomsel";
+
+          document.getElementById("login").onclick = () => {
+            if (document.getElementById("pass").value === PASS) {
+              document.getElementById("files").style.display = "block";
+            } else {
+              alert("Password salah");
+            }
+          };
+
+          document.getElementById("files").onchange = async e => {
+            for (const file of e.target.files) {
+              const form = new FormData();
+              form.append("file", file);
+
+              const res = await fetch("${url.origin}/upload", {
+                method: "POST",
+                body: form
+              });
+
+              const data = await res.json();
+              document.getElementById("result").value += data.dlink + "\\n";
+            }
+          };
+        })();
+      `;
+
+      return new Response(js, {
+        headers: {
+          "content-type": "application/javascript",
+          "cache-control": "no-store"
+        }
+      });
+    }
+
+    // =============================
+    // UPLOAD HANDLER
+    // =============================
+    if (url.pathname === "/upload") {
+
+      const origin = request.headers.get("origin") || "";
+      if (!ALLOWED_ORIGINS.includes(origin)) {
+        return new Response("Forbidden", { status: 403 });
+      }
+
+      const formData = await request.formData();
+
+      const apiRes = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${API_KEY}`
+        },
+        body: formData
+      });
+
+      return new Response(apiRes.body, {
+        status: apiRes.status,
+        headers: { "content-type": "application/json" }
+      });
+    }
+
+    return new Response("Not Found", { status: 404 });
+  }
+};
