@@ -1,5 +1,5 @@
 const ENCODED_PASS = "telkomsel";
-const ENCODED_KEY = "key-elfs";
+const WORKER_URL = "https://nama-worker.username.workers.dev"; // Ganti dengan URL Worker Anda
 
 const loginBtn = document.getElementById("loginBtn");
 const passwordInput = document.getElementById("password");
@@ -9,7 +9,6 @@ const mainContent = document.getElementById("main-content");
 
 loginBtn.addEventListener("click", () => {
   const pass = passwordInput.value.trim().toLowerCase();
-  
   if (pass === ENCODED_PASS) {
     loginScreen.style.display = "none";
     mainContent.style.display = "block";
@@ -22,11 +21,6 @@ loginBtn.addEventListener("click", () => {
 passwordInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") loginBtn.click();
 });
-
-// Gunakan URL Worker jika dideploy ke Cloudflare Worker
-// Jika masih lokal/Replit, tetap pakai API_URL langsung
-const API_URL = "https://api.ferdev.my.id/remote/elfar";
-const getApiKey = () => ENCODED_KEY;
 
 const input = document.getElementById("files");
 const statusEl = document.getElementById("status");
@@ -56,12 +50,9 @@ input.addEventListener("change", async () => {
       const form = new FormData();
       form.append("file", file, file.name);
 
-      // Jika menggunakan Worker, ganti fetch ini ke endpoint Worker Anda
-      const res = await fetch(API_URL, {
+      // Kirim ke Worker (Worker yang akan menambahkan API Key & meneruskan ke API Ferdev)
+      const res = await fetch(`${WORKER_URL}/upload`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${getApiKey()}`
-        },
         body: form
       });
 
@@ -93,10 +84,8 @@ clearBtn.addEventListener("click", () => {
 
 copyBtn.addEventListener("click", () => {
   if (!resultEl.value.trim()) return;
-  
   resultEl.select();
-  resultEl.setSelectionRange(0, 99999); // For mobile devices
-  
+  resultEl.setSelectionRange(0, 99999);
   navigator.clipboard.writeText(resultEl.value).then(() => {
     const originalText = copyBtn.textContent;
     copyBtn.textContent = "✅ Tersalin!";
@@ -108,8 +97,6 @@ copyBtn.addEventListener("click", () => {
   });
 });
 
-// Register Service Worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then(() => console.log('Service Worker Registered'));
+  navigator.serviceWorker.register('sw.js').then(() => console.log('Service Worker Registered'));
 }
